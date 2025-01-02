@@ -2,6 +2,8 @@ package com.mycompany.app.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "class")
 public class ArtClass {
@@ -15,6 +17,15 @@ public class ArtClass {
 
     @Column(name = "day_of_week")
     private String dayOfWeek;
+
+    @OneToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "student_class", joinColumns = @JoinColumn(name = "class_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id"))
+    private List<Student> students;
 
     public int getId() {
         return id;
@@ -38,5 +49,21 @@ public class ArtClass {
 
     public void setDayOfWeek(String dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }
