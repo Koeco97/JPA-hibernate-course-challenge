@@ -42,4 +42,12 @@ public class Teacher {
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
+
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

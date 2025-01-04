@@ -4,10 +4,12 @@ import com.mycompany.app.entities.ArtClass;
 import com.mycompany.app.entities.Review;
 import com.mycompany.app.entities.Student;
 import com.mycompany.app.entities.Teacher;
+import com.mycompany.app.repositorypattern.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.List;
 
@@ -26,7 +28,8 @@ public class Main {
             // printAvgRatingForTeacherName(emf, "White");
             // printAvgRatingForTeachers(emf);
             // printAvgRatingForTeachersDesc(emf);
-             printAvgRatingForTeachersGt3Desc(emf);
+            // printAvgRatingForTeachersGt3Desc(emf);
+            useRepository(emf);
         }
     }
 
@@ -273,4 +276,46 @@ public class Main {
             em.getTransaction().commit();
         }
     }
+
+    private static void useRepository(EntityManagerFactory emf) {
+        EntityManager em = emf.createEntityManager();
+
+        try(em) {
+            ArtClassRepository artClassRepository = new ArtClassRepositoryImpl(em);
+            ArtClass artClass = new ArtClass();
+            artClass.setName("ArtClassTestCreation");
+            artClassRepository.add(artClass);
+
+            List<ArtClass> artClasses = artClassRepository.getClassByName("ArtClassTestCreation");
+            artClasses.forEach(aClass -> {
+                aClass.setName("ArtClassTestUpdate");
+                artClassRepository.update(aClass);
+            });
+
+            List<ArtClass> artClassesRemove = artClassRepository.getClassByName("ArtClassTestUpdate");
+            artClassesRemove.forEach(aClass -> {
+                artClassRepository.remove(aClass);
+            });
+
+            ReviewRepository reviewRepository = new ReviewRepositoryImpl(em);
+            Double avgRating = reviewRepository.getAvgRatingForTeacher("White");
+            System.out.println("Avg rating for White: " + avgRating);
+
+            reviewRepository.getAvgRatingsByTeachers().forEach((teacherName, avgRatingByTeacher) -> System.out.println("Avg rating for Teacher: " + teacherName + ": " + avgRatingByTeacher));
+
+            StudentRepository studentRepository = new StudentRepositoryImpl(em);
+            int studentId = 1;
+            Student student = studentRepository.getStudentById(studentId);
+            System.out.println("Student with studentId " + studentId + ": " + student);
+
+            studentRepository.getAllStudents().forEach(System.out::println);
+            studentRepository.getStudentsForDay("Monday").forEach(System.out::println);
+
+            TeacherRepository teacherRepository = new TeacherRepositoryImpl(em);
+            int teacherId = 1;
+            Teacher teacher = teacherRepository.getTeacherById(teacherId);
+            System.out.println("Teacher with teacherId " + teacherId + ": " + teacher);
+        }
+    }
+
 }

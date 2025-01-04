@@ -51,4 +51,14 @@ public class Review {
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", comment='" + comment + '\'' +
+                ", rating=" + rating +
+                ", teacher=" + teacher +
+                '}';
+    }
 }
